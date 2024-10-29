@@ -8,4 +8,5 @@ const ordersWithProductsQuery = supabase
   .select('*, order_items:order_item(*, product(*)), user(*)')
   .order('created_at', { ascending: false });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type OrdersWithProducts = QueryData<typeof ordersWithProductsQuery>;

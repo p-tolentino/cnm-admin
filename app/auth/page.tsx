@@ -45,7 +45,6 @@ export default function Auth() {
       router.push("/admin");
     } catch (error) {
       console.log(error);
-      throw new Error(error);
     } finally {
       setIsAuthenticating(false);
     }
