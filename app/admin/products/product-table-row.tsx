@@ -58,7 +58,7 @@ export const ProductTableRow = ({
     <TableRow key={product.id}>
       <TableCell>{product.flavor}</TableCell>
       <TableCell>{product.category.name}</TableCell>
-      <TableCell>{formatCurrency(product.price!!)}</TableCell>
+      <TableCell>{formatCurrency(product.price)}</TableCell>
       <TableCell>{product.size}</TableCell>
       <TableCell>
         {product.heroImage && (

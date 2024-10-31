@@ -102,7 +102,7 @@ export const CategoryTableRow = ({
                             {product.flavor} ({product.size})
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            {formatCurrency(product.price!!)}
+                            {formatCurrency(product.price)}
                           </p>
                         </div>
                       </div>
