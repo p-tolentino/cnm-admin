@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Category } from "@/app/admin/categories/categories.types";
 import {
@@ -56,12 +57,11 @@ export const ProductPageComponent: FC<Props> = ({
   const form = useForm<CreateOrUpdateProductSchema>({
     resolver: zodResolver(createOrUpdateProductSchema),
     defaultValues: {
-      title: "",
+      flavor: "",
       category: undefined,
       price: undefined,
-      maxQuantity: undefined,
+      size: undefined,
       heroImage: undefined,
-      images: [],
       intent: "create",
     },
   });
@@ -73,10 +73,9 @@ export const ProductPageComponent: FC<Props> = ({
   ) => {
     const {
       category,
-      images,
-      maxQuantity,
+      size,
       price,
-      title,
+      flavor,
       heroImage,
       slug,
       intent = "create",
@@ -91,7 +90,6 @@ export const ProductPageComponent: FC<Props> = ({
     };
 
     let heroImageUrl: string | undefined;
-    let imageUrls: string[] = [];
 
     if (heroImage) {
       const imagePromise = Array.from(heroImage).map((file) =>
@@ -106,28 +104,15 @@ export const ProductPageComponent: FC<Props> = ({
       }
     }
 
-    if (images.length > 0) {
-      const imagesPromises = Array.from(images).map((file) => uploadFile(file));
-
-      try {
-        imageUrls = (await Promise.all(imagesPromises)) as string[];
-      } catch (error) {
-        console.error("Error uploading images:", error);
-        toast.error("Error uploading images");
-        return;
-      }
-    }
-
     switch (intent) {
       case "create": {
-        if (heroImageUrl && imageUrls.length > 0) {
+        if (heroImageUrl) {
           await createProduct({
             category: Number(category),
-            images: imageUrls,
             heroImage: heroImageUrl,
-            maxQuantity: Number(maxQuantity),
+            size,
             price: Number(price),
-            title,
+            flavor,
           });
           form.reset();
           router.refresh();
@@ -137,14 +122,13 @@ export const ProductPageComponent: FC<Props> = ({
         break;
       }
       case "update": {
-        if (heroImageUrl && imageUrls.length > 0 && slug) {
+        if (heroImageUrl && slug) {
           await updateProduct({
             category: Number(category),
             heroImage: heroImageUrl!,
-            imagesUrl: imageUrls,
-            maxQuantity: Number(maxQuantity),
+            size,
             price: Number(price),
-            title,
+            flavor,
             slug,
           });
           form.reset();
@@ -174,26 +158,49 @@ export const ProductPageComponent: FC<Props> = ({
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Products Management</h1>
-          <Button
-            onClick={() => {
-              setCurrentProduct(null);
-              setIsProductModalOpen(true);
-            }}
+          <h1 className="text-2xl font-bold">Products</h1>
+
+          <Dialog
+            open={isProductModalOpen}
+            onOpenChange={() => setIsProductModalOpen(!isProductModalOpen)}
           >
-            <PlusIcon className="mr-2 h-4 w-4" /> Add Product
-          </Button>
+            <DialogTrigger asChild>
+              <Button
+                size="sm"
+                className="h-8 gap-1"
+                onClick={() => {
+                  setCurrentProduct(null);
+                  setIsProductModalOpen(true);
+                }}
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Add Product
+                </span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Product</DialogTitle>
+              </DialogHeader>
+              <ProductForm
+                form={form}
+                onSubmit={productCreateUpdateHandler}
+                categories={categories}
+                defaultValues={currentProduct}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
+              <TableHead>Flavor</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead>Max Quantity</TableHead>
-              <TableHead>Hero Image</TableHead>
-              <TableHead>Product Images</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Product Image</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -211,14 +218,6 @@ export const ProductPageComponent: FC<Props> = ({
         </Table>
 
         {/* Product Modal */}
-        <ProductForm
-          form={form}
-          onSubmit={productCreateUpdateHandler}
-          categories={categories}
-          isProductModalOpen={isProductModalOpen}
-          setIsProductModalOpen={setIsProductModalOpen}
-          defaultValues={currentProduct}
-        />
 
         {/* Delete Product Modal */}
         <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
@@ -226,7 +225,13 @@ export const ProductPageComponent: FC<Props> = ({
             <DialogHeader>
               <DialogTitle>Delete Product</DialogTitle>
             </DialogHeader>
-            <p>Are you sure you want to delete {currentProduct?.title}</p>
+            <p className="flex">
+              Are you sure you want to delete
+              <span className="font-bold ml-1">
+                {currentProduct?.flavor} ({currentProduct?.size})
+              </span>
+              ?
+            </p>
             <DialogFooter>
               <Button variant="destructive" onClick={deleteProductHandler}>
                 Delete

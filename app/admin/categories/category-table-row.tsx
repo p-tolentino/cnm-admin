@@ -25,6 +25,8 @@ import {
 import { TableCell, TableRow } from "@/components/ui/table";
 import { CreateCategorySchema } from "@/app/admin/categories/schema";
 import { CategoryWithProducts } from "@/app/admin/categories/categories.types";
+import { Pencil, Trash2 } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 export const CategoryTableRow = ({
   category,
@@ -68,7 +70,7 @@ export const CategoryTableRow = ({
         </TableCell>
         <TableCell className="font-medium">{category.name}</TableCell>
         <TableCell className="md:table-cell">
-          {format(new Date(category.created_at), "yyyy-MM-dd")}
+          {format(new Date(category.created_at), "MMMM dd, yyyy")}
         </TableCell>
         <TableCell className="md:table-cell">
           {category.products && category.products.length > 0 ? (
@@ -76,17 +78,17 @@ export const CategoryTableRow = ({
               <DialogTrigger>
                 {category.products
                   .slice(0, 2)
-                  .map((product) => product.title)
+                  .map((product) => product.flavor)
                   .join(", ")}
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle className="sr-only">
                   Category product list
                 </DialogTitle>
-                <h2>Products</h2>
+                <h2 className="font-bold">Products</h2>
                 <ScrollArea className="h-[400px] rounded-md p-4">
                   {category.products.map((product) => (
-                    <Card key={product.id} className="cursor-pointer">
+                    <Card key={product.id} className="cursor-pointer mt-2">
                       <div className="grid grid-cols-[100px,1fr] items-center gap-4">
                         <Image
                           alt="Product image"
@@ -97,10 +99,10 @@ export const CategoryTableRow = ({
                         />
                         <div className="flex flex-col space-y-1">
                           <h3 className="font-medium leading-none">
-                            {product.title}
+                            {product.flavor} ({product.size})
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            {product.maxQuantity} in stock
+                            {formatCurrency(product.price!!)}
                           </p>
                         </div>
                       </div>
@@ -110,7 +112,7 @@ export const CategoryTableRow = ({
               </DialogContent>
             </Dialog>
           ) : (
-            "No products linked to this category"
+            "-"
           )}
         </TableCell>
         <TableCell>
@@ -121,8 +123,7 @@ export const CategoryTableRow = ({
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[160px]">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-auto">
               <DropdownMenuItem
                 onClick={() =>
                   handleEditClick({
@@ -131,9 +132,11 @@ export const CategoryTableRow = ({
                   })
                 }
               >
+                <Pencil className="h-4 w-4" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+                <Trash2 className="h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

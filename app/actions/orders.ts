@@ -2,7 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { sendNotification } from './notifications';
+// import { sendNotification } from './notifications';
 
 const statusDisplayText: { [key: string]: string } = {
   Pending: "Pending",
@@ -42,7 +42,7 @@ export const updateOrderStatus = async (orderId: number, status: string) => {
 
   const userId = session.user.id;
 
-  await sendNotification(userId, statusDisplayText[status] + ' 🚀');
+  // await sendNotification(userId, statusDisplayText[status] + ' 🚀');
 
   revalidatePath('/admin/orders');
 };

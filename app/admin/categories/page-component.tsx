@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuid } from "uuid";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -119,8 +118,9 @@ const CategoryPageComponent: FC<Props> = ({ categories }) => {
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-      <div className="flex items-center my-10">
-        <div className="ml-auto flex items-center gap-2">
+      <div className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Categories</h1>
           <Dialog
             open={isCreateCategoryModalOpen}
             onOpenChange={() =>
@@ -154,42 +154,32 @@ const CategoryPageComponent: FC<Props> = ({ categories }) => {
             </DialogContent>
           </Dialog>
         </div>
+
+        <Table className="min-w-[600px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead className="md:table-cell">Created at</TableHead>
+              <TableHead className="md:table-cell">Products</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {categories.map((category) => (
+              <CategoryTableRow
+                key={category.id}
+                category={category}
+                setCurrentCategory={setCurrentCategory}
+                setIsCreateCategoryModalOpen={setIsCreateCategoryModalOpen}
+                deleteCategoryHandler={deleteCategoryHandler}
+              />
+            ))}
+          </TableBody>
+        </Table>
       </div>
-
-      <Card className="overflow-x-auto">
-        <CardHeader>
-          <CardTitle>Categories</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <Table className="min-w-[600px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px] sm:table-cell">
-                  <span className="sr-only">Image</span>
-                </TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="md:table-cell">Created at</TableHead>
-                <TableHead className="md:table-cell">Products</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category) => (
-                <CategoryTableRow
-                  key={category.id}
-                  category={category}
-                  setCurrentCategory={setCurrentCategory}
-                  setIsCreateCategoryModalOpen={setIsCreateCategoryModalOpen}
-                  deleteCategoryHandler={deleteCategoryHandler}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
     </main>
   );
 };

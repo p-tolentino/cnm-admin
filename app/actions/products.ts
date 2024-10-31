@@ -29,22 +29,20 @@ export const getProductsWithCategories =
 export const createProduct = async ({
   category,
   heroImage,
-  images,
-  maxQuantity,
+  size,
   price,
-  title,
+  flavor,
 }: CreateProductSchemaServer) => {
   const supabase = await createClient();
-  const slug = slugify(title, { lower: true });
+  const slug = slugify(flavor, { lower: true }).concat(`-${size}`);
 
   const { data, error } = await supabase.from('product').insert({
     category,
     heroImage,
-    imagesUrl: images,
-    maxQuantity,
+    size,
     price,
     slug,
-    title,
+    flavor,
   });
 
   if (error) {
@@ -59,11 +57,10 @@ export const createProduct = async ({
 export const updateProduct = async ({
   category,
   heroImage,
-  imagesUrl,
-  maxQuantity,
+  size,
   price,
   slug,
-  title,
+  flavor,
 }: UpdateProductSchema) => {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -71,12 +68,12 @@ export const updateProduct = async ({
     .update({
       category,
       heroImage,
-      imagesUrl,
-      maxQuantity,
+      size,
       price,
-      title,
+      flavor,
+      slug
     })
-    .match({ slug });
+    .match({ slug, size });
 
   if (error) {
     throw new Error(`Error updating product: ${error.message}`);

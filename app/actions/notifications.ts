@@ -30,29 +30,29 @@ async function sendPushNotification({
   });
 }
 
-export const getUserNotificationToken = async (userId: string) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('users')
-    .select('expo_notification_token')
-    .eq('id', userId)
-    .single();
+// export const getUserNotificationToken = async (userId: string) => {
+//   const supabase = await createClient();
+//   const { data, error } = await supabase
+//     .from('users')
+//     .select('expo_notification_token')
+//     .eq('id', userId)
+//     .single();
 
-  if (error) throw new Error(error.message);
+//   if (error) throw new Error(error.message);
 
-  return data;
-};
+//   return data;
+// };
 
-export const sendNotification = async (userId: string, status: string) => {
-  const tokenData = await getUserNotificationToken(userId);
+// export const sendNotification = async (userId: string, status: string) => {
+//   const tokenData = await getUserNotificationToken(userId);
 
-  if (!tokenData.expo_notification_token) {
-    return;
-  }
+//   if (!tokenData.expo_notification_token) {
+//     return;
+//   }
 
-  await sendPushNotification({
-    expoPushToken: tokenData.expo_notification_token,
-    title: 'Your Order Status',
-    body: `Your order is now ${status}`,
-  });
-};
+//   await sendPushNotification({
+//     expoPushToken: tokenData.expo_notification_token,
+//     title: 'Your Order Status',
+//     body: `Your order is now ${status}`,
+//   });
+// };

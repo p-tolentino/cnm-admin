@@ -1,11 +1,18 @@
 import { Dispatch, SetStateAction } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { ProductWithCategory } from "@/app/admin/products/products.types";
 import { CreateOrUpdateProductSchema } from "@/app/admin/products/schema";
+import { formatCurrency } from "@/lib/utils";
 
 type Props = {
   product: ProductWithCategory;
@@ -24,12 +31,11 @@ export const ProductTableRow = ({
 }: Props) => {
   const handleEditClick = (product: CreateOrUpdateProductSchema) => {
     setCurrentProduct({
-      title: product.title,
+      flavor: product.flavor,
       category: product.category,
       price: product.price,
-      maxQuantity: product.maxQuantity,
+      size: product.size,
       heroImage: product.heroImage,
-      images: product.images,
       slug: product.slug,
       intent: "update",
     });
@@ -38,11 +44,10 @@ export const ProductTableRow = ({
 
   const handleDeleteClick = () => {
     setCurrentProduct({
-      title: product.title,
+      flavor: product.flavor,
       category: product.category.id.toString(),
       price: product.price?.toString() ?? "",
-      maxQuantity: product.maxQuantity.toString(),
-      images: [],
+      size: product.size,
       slug: product.slug,
       intent: "update",
     });
@@ -51,10 +56,10 @@ export const ProductTableRow = ({
 
   return (
     <TableRow key={product.id}>
-      <TableCell>{product.title}</TableCell>
+      <TableCell>{product.flavor}</TableCell>
       <TableCell>{product.category.name}</TableCell>
-      <TableCell>{product.price}</TableCell>
-      <TableCell>{product.maxQuantity}</TableCell>
+      <TableCell>{formatCurrency(product.price!!)}</TableCell>
+      <TableCell>{product.size}</TableCell>
       <TableCell>
         {product.heroImage && (
           <Image
@@ -67,38 +72,35 @@ export const ProductTableRow = ({
         )}
       </TableCell>
       <TableCell>
-        {product.imagesUrl.map((url, index) => (
-          <Image
-            width={40}
-            height={40}
-            key={index}
-            src={url}
-            alt={`Product ${index + 1}`}
-            className="w-10 h-10 object-cover inline-block mr-1"
-          />
-        ))}
-      </TableCell>
-      <TableCell>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() =>
-            handleEditClick({
-              title: product.title,
-              category: product.category.id.toString(),
-              price: product.price?.toString() ?? "",
-              maxQuantity: product.maxQuantity.toString(),
-              images: [],
-              slug: product.slug,
-              intent: "update",
-            })
-          }
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handleDeleteClick}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button size="icon" variant="ghost">
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-auto">
+            <DropdownMenuItem
+              onClick={() =>
+                handleEditClick({
+                  flavor: product.flavor,
+                  category: product.category.id.toString(),
+                  price: product.price?.toString() ?? "",
+                  size: product.size,
+                  slug: product.slug,
+                  intent: "update",
+                })
+              }
+            >
+              <Pencil className="h-4 w-4" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDeleteClick}>
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TableCell>
     </TableRow>
   );

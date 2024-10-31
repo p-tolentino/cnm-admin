@@ -65,6 +65,7 @@ export const CategoryForm = ({
                     field.onChange(event.target.files?.[0]);
                   }}
                   disabled={isSubmitting}
+                  required
                 />
               </FormControl>
               <FormDescription>Category Image</FormDescription>

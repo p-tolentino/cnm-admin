@@ -51,7 +51,7 @@ const PageComponent = ({
   latestUsers: LatestUser[];
 }) => {
   return (
-    <div className="flex-1 p-8 overflow-auto">
+    <div className="flex-1 px-32 py-4 overflow-auto">
       <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

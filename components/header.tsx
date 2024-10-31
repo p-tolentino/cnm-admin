@@ -1,8 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CircleUser, Menu, Moon, Package2, Search, Sun } from "lucide-react";
+import { User as UserIcon, Menu, Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,11 +14,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { createClient } from "@/utils/supabase/client";
+import Image from "next/image";
+import { User } from "@supabase/supabase-js";
+import { PiSignOut as SignOut } from "react-icons/pi";
 
 const NAV_LINKS = [
   { href: "/admin/dashboard", label: "Dashboard" },
@@ -28,26 +31,54 @@ const NAV_LINKS = [
 
 export const Header = () => {
   const pathname = usePathname();
-
-  const { setTheme } = useTheme();
-
+  const { setTheme, theme } = useTheme();
   const router = useRouter();
 
   const supabase = createClient();
+
+  const [user, setUser] = useState<User | null>(null);
+
+  // Fetch user data once the component mounts
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data) setUser(data.user);
+    };
+    fetchUser();
+  }, [supabase]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
 
+  const isSystemDarkMode = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  ).matches;
+
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-lg font-semibold md:text-base"
-        >
-          <Package2 className="h-6 w-6" />
+        <Link href="/" className="flex items-center">
+          {theme === "dark" || (isSystemDarkMode && theme === "system") ? (
+            <Image
+              src="/cover-dark.png"
+              alt="Chicken Near Me Logo"
+              height={48}
+              width={160}
+              className="h-auto max-w-[150px] object-contain"
+              priority
+            />
+          ) : (
+            <Image
+              src="/cover.png"
+              alt="Chicken Near Me Logo"
+              height={48}
+              width={160}
+              className="h-auto max-w-[150px] object-contain"
+              priority
+            />
+          )}
         </Link>
         {NAV_LINKS.map(({ href, label }) => (
           <Link
@@ -56,7 +87,7 @@ export const Header = () => {
             className={cn(
               "transition-colors hover:text-foreground text-muted-foreground",
               {
-                "text-foreground font-bold": pathname === href,
+                "text-[#c41b1b] font-bold": pathname === href,
               }
             )}
           >
@@ -73,11 +104,15 @@ export const Header = () => {
         </SheetTrigger>
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-lg font-semibold"
-            >
-              <Package2 className="h-6 w-6" />
+            <Link href="/" className="relative flex items-center right-8">
+              <Image
+                src="/cover.png"
+                alt="Chicken Near Me Logo"
+                height={48}
+                width={160}
+                className="h-auto max-w-[150px] object-contain"
+                priority
+              />
             </Link>
             {NAV_LINKS.map(({ href, label }) => (
               <Link
@@ -93,8 +128,8 @@ export const Header = () => {
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial">
+      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
+        {/* <form className="ml-auto flex-1 sm:flex-initial">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -103,19 +138,26 @@ export const Header = () => {
               className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
             />
           </div>
-        </form>
+        </form> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon" className="rounded-full">
-              <CircleUser className="h-5 w-5" />
+            <Button
+              variant="outline"
+              size="icon"
+              className="hover:bg-none rounded-xl "
+            >
+              <UserIcon className="h-5 w-5" />
               <span className="sr-only">Toggle user menu</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              Logout
+              <SignOut className="w-4 h-4 " />
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             <DropdownMenuItem asChild>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
