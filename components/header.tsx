@@ -31,7 +31,7 @@ const NAV_LINKS = [
 
 export const Header = () => {
   const pathname = usePathname();
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme, systemTheme } = useTheme();
   const router = useRouter();
 
   const supabase = createClient();
@@ -52,15 +52,12 @@ export const Header = () => {
     router.push("/");
   };
 
-  const isSystemDarkMode = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
-
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link href="/" className="flex items-center">
-          {theme === "dark" || (isSystemDarkMode && theme === "system") ? (
+          {theme === "dark" ||
+          (theme === "system" && systemTheme === "dark") ? (
             <Image
               src="/cover-dark.png"
               alt="Chicken Near Me Logo"

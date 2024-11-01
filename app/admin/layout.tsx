@@ -20,8 +20,12 @@ export default async function AdminLayout({
       .single();
 
     if (error || !data) {
-      console.log("Error fetching user data", error);
-      return;
+      if (error) {
+        console.log("Error fetching user data", error);
+        return;
+      } else {
+        return redirect("/auth");
+      }
     }
 
     if (data.type === ADMIN) return redirect("/");

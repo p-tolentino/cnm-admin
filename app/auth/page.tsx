@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { authenticate } from "../actions/auth";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -42,8 +43,10 @@ export default function Auth() {
 
     try {
       await authenticate(email, password);
+      toast.success("Logged in successfully");
       router.push("/admin");
     } catch (error) {
+      toast.error("Something went wrong.");
       console.log(error);
     } finally {
       setIsAuthenticating(false);

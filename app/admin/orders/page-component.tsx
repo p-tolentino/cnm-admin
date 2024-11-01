@@ -36,17 +36,14 @@ import { cn, formatCurrency } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
 
-const statusOptions = ["Pending", "Delivered"];
+const statusOptions = ["Pending", "Paid", "In-Transit", "Delivered"];
 
 type Props = {
   ordersWithProducts: OrdersWithProducts;
 };
 
 export default function PageComponent({ ordersWithProducts }: Props) {
-  const { theme } = useTheme();
-  const isSystemDarkMode = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
+  const { theme, systemTheme } = useTheme();
 
   const orderedItems = ordersWithProducts.flatMap((order) => {
     const { order_items } = order;
@@ -64,13 +61,28 @@ export default function PageComponent({ ordersWithProducts }: Props) {
   const statusStyle = (status: string) => {
     switch (status.toLowerCase()) {
       case "pending": {
-        if (theme === "dark" || (isSystemDarkMode && theme === "system")) {
+        if (
+          theme === "dark" ||
+          (theme === "system" && systemTheme === "dark")
+        ) {
           return "text-orange-300 bg-orange-950 border-orange-900";
         }
         return "text-orange-700 bg-orange-200";
       }
+      case "in-transit": {
+        if (
+          theme === "dark" ||
+          (theme === "system" && systemTheme === "dark")
+        ) {
+          return "text-blue-300 bg-blue-950 border-blue-900";
+        }
+        return "text-blue-700 bg-blue-200";
+      }
       case "delivered": {
-        if (theme === "dark" || (isSystemDarkMode && theme === "system")) {
+        if (
+          theme === "dark" ||
+          (theme === "system" && systemTheme === "dark")
+        ) {
           return "text-green-300 bg-green-950 border-green-900";
         }
         return "text-green-700 bg-green-200";
@@ -202,11 +214,12 @@ export default function PageComponent({ ordersWithProducts }: Props) {
                   <DialogContent className="h-auto w-[80vw] max-w-4xl">
                     <DialogTitle>Proof of Payment</DialogTitle>
                     <div className="h-[80vh] flex flex-col items-center gap-4 rounded-lg justify-between ">
+                      <Separator className="my-1" />
                       <Image
                         src={order.proofOfPayment}
                         alt={`proof-of-payment_${order.slug}`}
                         fill
-                        className="p-10 object-contain"
+                        className="h-10 w-10 p-20 object-contain"
                         priority
                       />
                     </div>

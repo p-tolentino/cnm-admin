@@ -22,6 +22,7 @@ import {
   TiSocialInstagram as IG,
   TiLocation as LocPin,
 } from "react-icons/ti";
+import { useTheme } from "next-themes";
 
 interface MotionWrapperProps {
   children: ReactNode;
@@ -76,6 +77,7 @@ const testimonials = [
 export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
   const [rotate, setRotate] = useState({ rotateX: 0, rotateY: 0 });
+  const { theme, systemTheme } = useTheme();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -93,19 +95,31 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold flex items-center">
-          <Image
-            src="/logo.png"
-            alt="Chicken Near Me Logo"
-            className="mr-2 h-10 w-10"
-            height={50}
-            width={50}
-          />
-          Chicken Near Me
+        <h1 className="text-2xl font-bold flex items-center ">
+          {theme === "dark" ||
+          (theme === "system" && systemTheme === "dark") ? (
+            <Image
+              src="/cover-dark.png"
+              alt="Chicken Near Me Logo"
+              height={48}
+              width={160}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+          ) : (
+            <Image
+              src="/cover.png"
+              alt="Chicken Near Me Logo"
+              height={48}
+              width={160}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+          )}
         </h1>
         <Link href={`/admin/dashboard`}>
           <Button
-            className="opacity-25 text-sm hover:opacity-70 hover:text-md transition-all"
+            className="opacity-25 text-sm hover:opacity-70 hover:text-md transition-all "
             variant={"ghost"}
           >
             Admin Dashboard
@@ -124,10 +138,7 @@ export default function Home() {
                 </h2>
               </MotionWrapper>
               <MotionWrapper delay={0.2}>
-                <p className="text-xl  mb-6">
-                  Tase the latest blabhalbhal. Experience (something) at your
-                  fingertips idk.
-                </p>
+                <p className="text-xl  mb-6">No bones. All flavor.</p>
               </MotionWrapper>
               <MotionWrapper delay={0.4}>
                 <Button
@@ -160,7 +171,7 @@ export default function Home() {
                   alt="Chicken Near Me Logo"
                   className="rounded-3xl object-covermx-auto "
                 />
-                <Badge className="absolute top-16 right-14 bg-[#c41b1b] text-white text-md shadow-lg hover:text-red-500">
+                <Badge className="absolute top-16 right-14 bg-[#c41b1b] text-white text-md shadow-lg ">
                   New flavors!
                 </Badge>
               </motion.div>
@@ -273,7 +284,7 @@ export default function Home() {
               target="_blank"
               className="flex bg-white-500 container mx-auto px-4 text-center items-center"
             >
-              <IG className="w-8 h-8 " />
+              <LocPin className="w-8 h-8 " />
               <p className="ml-3">Chicken Near You Coming Soon</p>
             </Link>
           </div>

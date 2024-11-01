@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 import { ADMIN } from "../constants/constants";
+import { Toaster } from "sonner";
 
 export default async function AuthLayout({
   children,
@@ -25,5 +26,10 @@ export default async function AuthLayout({
     if (data.type === ADMIN) return redirect("/admin");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Toaster richColors />
+    </>
+  );
 }

@@ -4,12 +4,6 @@ import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 // import { sendNotification } from './notifications';
 
-const statusDisplayText: { [key: string]: string } = {
-  Pending: "Pending",
-  Completed: "Completed",
-  Shipped: "Shipped",
-  InTransit: "In Transit",
-};
 
 export const getOrdersWithProducts = async () => {
   const supabase = await createClient();
