@@ -218,9 +218,12 @@ export default function PageComponent({ ordersWithProducts }: Props) {
                       <Image
                         src={order.proofOfPayment}
                         alt={`proof-of-payment_${order.slug}`}
-                        fill
-                        className="h-10 w-10 p-20 object-contain"
+                        className="p-10 object-contain"
                         priority
+                        onError={(e) => {
+                          const imgElement = e.target as HTMLImageElement;
+                          imgElement.src = "/chicken-bg.jpg";
+                        }}
                       />
                     </div>
                   </DialogContent>
