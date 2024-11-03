@@ -34,6 +34,8 @@ import { updateOrderStatus } from "@/app/actions/orders";
 import { cn, formatCurrency } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "next-themes";
+import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const statusOptions = ["Pending", "Paid", "In-Transit", "Delivered"];
 
@@ -43,6 +45,7 @@ type Props = {
 
 export default function PageComponent({ ordersWithProducts }: Props) {
   const { theme, systemTheme } = useTheme();
+  const [isLoading, setIsLoading] = useState(true);
 
   const orderedItems = ordersWithProducts.flatMap((order) => {
     const { order_items } = order;
@@ -241,17 +244,22 @@ export default function PageComponent({ ordersWithProducts }: Props) {
                     </DialogHeader>
                     <div className="relative h-[80vh] flex flex-col items-center gap-4 rounded-lg justify-between space-y-4">
                       <Separator className="my-1" />
-                      <Image
-                        src={order.proofOfPayment}
-                        alt={`proof-of-payment_${order.slug}`}
-                        className="p-0 object-contain"
-                        fill
-                        priority
-                        onError={(e) => {
-                          const imgElement = e.target as HTMLImageElement;
-                          imgElement.src = "/chicken-bg.jpg";
-                        }}
-                      />
+                      {isLoading ? (
+                        <Skeleton className="w-full h-full" />
+                      ) : (
+                        <Image
+                          src={order.proofOfPayment}
+                          alt={`proof-of-payment_${order.slug}`}
+                          className="p-0 object-contain"
+                          fill
+                          priority
+                          onError={(e) => {
+                            const imgElement = e.target as HTMLImageElement;
+                            imgElement.src = "/chicken-bg.jpg";
+                          }}
+                          onLoadingComplete={() => setIsLoading(false)}
+                        />
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>

@@ -39,6 +39,11 @@ export const Header = () => {
 
   const [user, setUser] = useState<User | null>(null);
 
+  const logoSrc =
+    theme === "dark" || (theme === "system" && systemTheme === "dark")
+      ? "/cover-dark.png"
+      : "/cover.png";
+
   // Fetch user data once the component mounts
   useEffect(() => {
     const fetchUser = async () => {
@@ -56,27 +61,18 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <div className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6 p-4">
-        <Link href="/user" className="flex text-lg font-semibold md:text-base">
-          {theme === "dark" ||
-          (theme === "system" && systemTheme === "dark") ? (
-            <Image
-              src="/cover-dark.png"
-              alt="Chicken Near Me Logo"
-              height={48}
-              width={160}
-              className="h-10 w-auto"
-              priority
-            />
-          ) : (
-            <Image
-              src="/cover.png"
-              alt="Chicken Near Me Logo"
-              height={48}
-              width={160}
-              className="h-10 w-auto object-contain"
-              priority
-            />
-          )}
+        <Link
+          href="/"
+          className="flex text-lg font-semibold md:text-base relative flex-shrink-0"
+        >
+          <Image
+            src={logoSrc}
+            alt="Chicken Near Me Logo"
+            height={48}
+            width={160}
+            className="h-10 w-auto object-contain"
+            priority
+          />
         </Link>
         {NAV_LINKS.map(({ href, label }) => (
           <Link
@@ -108,26 +104,14 @@ export const Header = () => {
               className="flex items-center gap-2 text-lg font-semibold"
               onClick={() => setIsOpen(false)}
             >
-              {theme === "dark" ||
-              (theme === "system" && systemTheme === "dark") ? (
-                <Image
-                  src="/cover-dark.png"
-                  alt="Chicken Near Me Logo"
-                  height={48}
-                  width={160}
-                  className="h-10 md:h-14 lg:h-16 w-auto"
-                  priority
-                />
-              ) : (
-                <Image
-                  src="/cover.png"
-                  alt="Chicken Near Me Logo"
-                  height={48}
-                  width={160}
-                  className="h-10 w-auto object-contain"
-                  priority
-                />
-              )}
+              <Image
+                src={logoSrc}
+                alt="Chicken Near Me Logo"
+                height={48}
+                width={160}
+                className="h-10 md:h-14 lg:h-16 w-auto"
+                priority
+              />
             </Link>
             {NAV_LINKS.map(({ href, label }) => (
               <Link
