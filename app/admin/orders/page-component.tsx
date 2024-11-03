@@ -24,7 +24,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -54,6 +53,8 @@ export default function PageComponent({ ordersWithProducts }: Props) {
     });
   });
 
+  orderedItems.map((item) => console.log(item));
+
   const handleStatusChange = async (orderId: number, status: string) => {
     await updateOrderStatus(orderId, status);
   };
@@ -65,9 +66,18 @@ export default function PageComponent({ ordersWithProducts }: Props) {
           theme === "dark" ||
           (theme === "system" && systemTheme === "dark")
         ) {
-          return "text-orange-300 bg-orange-950 border-orange-900";
+          return "text-red-300 bg-red-950 border-red-900";
         }
-        return "text-orange-700 bg-orange-200";
+        return "text-red-700 bg-red-200";
+      }
+      case "paid": {
+        if (
+          theme === "dark" ||
+          (theme === "system" && systemTheme === "dark")
+        ) {
+          return "text-yellow-300 bg-yellow-950 border-yellow-900";
+        }
+        return "text-yellow-700 bg-yellow-200";
       }
       case "in-transit": {
         if (
@@ -162,38 +172,49 @@ export default function PageComponent({ ordersWithProducts }: Props) {
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Ordered Products</DialogTitle>
+                      <DialogDescription>
+                        {`// TODO: DESCRIPTION`}
+                      </DialogDescription>
                     </DialogHeader>
                     <Separator />
 
-                    {orderedItems.map(({ product, quantity }) => (
-                      <div key={product.id}>
-                        <div className="px-2">
-                          <div className="flex items-center space-x-4 h-full">
-                            <div className="w-full flex items-end justify-between">
-                              <div className="flex space-x-1">
-                                <span className="flex text-sm text-gray-500">
-                                  x{quantity}
-                                </span>
-                                <div>
-                                  <span className="flex font-semibold">
-                                    {product.flavor} ({product.size})
-                                  </span>
-                                  <span className="text-sm text-gray-600">
-                                    {product.price.toFixed(2)}
-                                  </span>
-                                </div>
-                              </div>
+                    {orderedItems?.map((item) => {
+                      return (
+                        item.order_id === order.id && (
+                          <div key={item.product.id}>
+                            <div className="px-2">
+                              <div className="flex items-center space-x-4 h-full">
+                                <div className="w-full flex items-end justify-between">
+                                  <div className="flex space-x-1">
+                                    <span className="flex text-sm text-gray-500">
+                                      x{item.quantity}
+                                    </span>
+                                    <div>
+                                      <span className="flex font-semibold">
+                                        {item.product.flavor} (
+                                        {item.product.size})
+                                      </span>
+                                      <span className="text-sm text-gray-600">
+                                        {item.product.price.toFixed(2)}
+                                      </span>
+                                    </div>
+                                  </div>
 
-                              <div className="flex items-center justify-between">
-                                <span className="flex text-sm text-gray-500">
-                                  = {(product.price * quantity).toFixed(2)}
-                                </span>
+                                  <div className="flex items-center justify-between">
+                                    <span className="flex text-sm text-gray-500">
+                                      ={" "}
+                                      {(
+                                        item.product.price * item.quantity
+                                      ).toFixed(2)}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
+                        )
+                      );
+                    })}
                     <Separator />
                     <div className="flex justify-between  text-sm">
                       Total:
@@ -212,13 +233,19 @@ export default function PageComponent({ ordersWithProducts }: Props) {
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="h-auto w-[80vw] max-w-4xl">
-                    <DialogTitle>Proof of Payment</DialogTitle>
-                    <div className="h-[80vh] flex flex-col items-center gap-4 rounded-lg justify-between ">
+                    <DialogHeader>
+                      <DialogTitle>Proof of Payment</DialogTitle>
+                      <DialogDescription>
+                        {`// TODO: DESCRIPTION`}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="relative h-[80vh] flex flex-col items-center gap-4 rounded-lg justify-between space-y-4">
                       <Separator className="my-1" />
                       <Image
                         src={order.proofOfPayment}
                         alt={`proof-of-payment_${order.slug}`}
-                        className="p-10 object-contain"
+                        className="p-0 object-contain"
+                        fill
                         priority
                         onError={(e) => {
                           const imgElement = e.target as HTMLImageElement;

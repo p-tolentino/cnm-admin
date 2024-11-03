@@ -102,14 +102,26 @@ export const Header = () => {
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
             <Link href="/" className="relative flex items-center right-8">
-              <Image
-                src="/cover.png"
-                alt="Chicken Near Me Logo"
-                height={48}
-                width={160}
-                className="h-auto max-w-[150px] object-contain"
-                priority
-              />
+              {theme === "dark" ||
+              (theme === "system" && systemTheme === "dark") ? (
+                <Image
+                  src="/cover-dark.png"
+                  alt="Chicken Near Me Logo"
+                  height={48}
+                  width={160}
+                  className="h-auto max-w-[150px] object-contain"
+                  priority
+                />
+              ) : (
+                <Image
+                  src="/cover.png"
+                  alt="Chicken Near Me Logo"
+                  height={48}
+                  width={160}
+                  className="h-auto max-w-[150px] object-contain"
+                  priority
+                />
+              )}
             </Link>
             {NAV_LINKS.map(({ href, label }) => (
               <Link
