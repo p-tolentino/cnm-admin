@@ -22,13 +22,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { OrdersWithProducts } from "../orders/orders.types";
+import { Database } from "@/utils/supabase/types";
+import { format, parseISO } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 type MonthlyOrderData = {
   name: string;
   orders: number;
 };
 
-type CatrgoryData = {
+type CategoryData = {
   name: string;
   products: number;
 };
@@ -39,17 +43,49 @@ type LatestUser = {
   date: string | null;
 };
 
+type OrderItemWithProduct =
+  Database["public"]["Tables"]["order_item"]["Row"] & {
+    product: Database["public"]["Tables"]["product"]["Row"];
+  };
+
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
+const RED_SHADES = [
+  "#B22222", // [0] Firebrick (Base)
+  "#8B0000", // [1] Dark Red (applicable to Markers)
+  "#CD5C5C", // [2] Indian Red
+  "#FF6347", // [3] Tomato
+  "#FF7F50", // [4] Coral
+  "#FF4500", // [5] Orange Red (applicable to Bar Chart and Zoom Area)
+  "#FFB6C1", // [6] Light Pink
+];
 
 const PageComponent = ({
   monthlyOrders,
   categoryData,
   latestUsers,
+  allOrders,
+  allOrderItems,
 }: {
   monthlyOrders: MonthlyOrderData[];
-  categoryData: CatrgoryData[];
+  categoryData: CategoryData[];
   latestUsers: LatestUser[];
+  allOrders: OrdersWithProducts;
+  allOrderItems: OrderItemWithProduct[];
 }) => {
+  const flavorData = allOrderItems.reduce((acc, item) => {
+    const flavor = item.product.flavor;
+    const existingFlavor = acc.find((entry) => entry.flavor === flavor);
+
+    if (existingFlavor) {
+      existingFlavor.value += 1; // Increment count if flavor already exists
+    } else {
+      acc.push({ flavor, value: 1 }); // Add new flavor entry
+    }
+
+    return acc;
+  }, [] as { flavor: string; value: number }[]);
+
   return (
     <div className="flex-1 px-32 py-4 overflow-auto">
       <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
@@ -68,23 +104,25 @@ const PageComponent = ({
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="orders" fill="#8884d8" />
+                <Bar dataKey="orders" fill="#C41B1B" name={"Orders"} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
         {/* Products Chart */}
+        {/* Flavor Distribution (Pie) */}
         <Card>
           <CardHeader>
-            <CardTitle>Product Distribution</CardTitle>
+            <CardTitle>Flavor Distribution (Chicken)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={categoryData}
-                  dataKey="products"
+                  data={flavorData}
+                  dataKey="value"
+                  nameKey="flavor"
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
@@ -97,7 +135,7 @@ const PageComponent = ({
                   {categoryData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
+                      fill={RED_SHADES[index % RED_SHADES.length]}
                     />
                   ))}
                 </Pie>
@@ -120,7 +158,7 @@ const PageComponent = ({
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="products" fill="#82ca9d" />
+                <Bar dataKey="products" fill="#B22222" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -140,12 +178,20 @@ const PageComponent = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {latestUsers.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.date}</TableCell>
-                  </TableRow>
-                ))}
+                {latestUsers.map(
+                  (user) =>
+                    user.date && (
+                      <TableRow key={user.id}>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          {format(
+                            toZonedTime(parseISO(user.date), "Asia/Manila"),
+                            "MMMM dd,  yyyy hh:mm:ss aa"
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    )
+                )}
               </TableBody>
             </Table>
           </CardContent>

@@ -23,7 +23,11 @@ export default async function AuthLayout({
       return;
     }
 
-    if (data.type === ADMIN) return redirect("/admin");
+    if (data.type === ADMIN) {
+      return redirect("/admin");
+    } else {
+      return redirect(`cnm-order-form.vercel.app/user`);
+    }
   }
 
   return (

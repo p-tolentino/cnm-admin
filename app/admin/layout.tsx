@@ -4,6 +4,8 @@ import { ADMIN } from "../constants/constants";
 import { RenderMounted } from "@/components/render-mounted";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { toast } from "sonner";
+import UnauthorizedToast from "@/components/unauthorized-toast";
 
 export default async function AdminLayout({
   children,
@@ -28,7 +30,11 @@ export default async function AdminLayout({
       }
     }
 
-    if (data.type === ADMIN) return redirect("/");
+    if (data.type === ADMIN) {
+      return redirect("/");
+    } else {
+      return <UnauthorizedToast />;
+    }
   }
 
   return (

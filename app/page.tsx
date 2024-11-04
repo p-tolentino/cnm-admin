@@ -1,17 +1,20 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronRight, Star } from "lucide-react";
+import { GiChickenLeg, GiChefToque, GiHotSpices } from "react-icons/gi";
 import {
-  ChevronRight,
-  Star,
-  Smartphone,
-  Zap,
-  ShoppingCart,
-  Gift,
-} from "lucide-react";
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { FaRecycle } from "react-icons/fa";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +26,7 @@ import {
   TiLocation as LocPin,
 } from "react-icons/ti";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 interface MotionWrapperProps {
   children: ReactNode;
@@ -41,36 +45,48 @@ const MotionWrapper = ({ children, delay = 0 }: MotionWrapperProps) => (
 
 const features = [
   {
-    icon: Smartphone,
-    title: "User-Friendly Interface",
-    description: "Intuitive design for effortless navigation and shopping.",
+    icon: GiChickenLeg,
+    title: "Juicy Jumbo Pieces",
+    description: "Size matters, especially when it comes to chicken!",
   },
   {
-    icon: Zap,
-    title: "Lightning-Fast Search",
+    icon: GiHotSpices,
+    title: "Flavor Explosion",
+    description: "Our secret spice blend will make your taste buds dance!",
+  },
+  {
+    icon: GiChefToque,
+    title: "Culinary Craftsmanship",
     description:
-      "Find the perfect gadget in seconds with our powerful search engine.",
+      "Each piece is a masterpiece, crafted with love and expertise.",
   },
   {
-    icon: ShoppingCart,
-    title: "Secure Checkout",
-    description: "Shop with confidence using our encrypted payment system.",
-  },
-  {
-    icon: Gift,
-    title: "Exclusive Deals",
-    description: "Access app-only discounts and special offers.",
+    icon: FaRecycle,
+    title: "Eco-Friendly Packaging",
+    description: "Saving the planet, one chicken bucket at a time!",
   },
 ];
 
 const testimonials = [
   {
-    name: "John Doe",
-    comment: "im gae",
+    name: "Juan Dela Cruz",
+    comment: "Ang sarap ng chicken, parang nanalo ako sa lotto!",
+    avatar: "/placeholder.svg?height=48&width=48",
   },
   {
-    name: "Jane Doe",
-    comment: "laki ng chicken kasing laki ng",
+    name: "Maria Santos",
+    comment: "Mas malaki pa sa sweldo ko ang chicken nila!",
+    avatar: "/placeholder.svg?height=48&width=48",
+  },
+  {
+    name: "Pedro Penduko",
+    comment: "Pwedeng pang-away sa kalye, pero mas masarap kainin!",
+    avatar: "/placeholder.svg?height=48&width=48",
+  },
+  {
+    name: "Nena Babushka",
+    comment: "Parang magic, nawala ang pagod ko sa trabaho!",
+    avatar: "/placeholder.svg?height=48&width=48",
   },
 ];
 
@@ -78,6 +94,8 @@ export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
   const [rotate, setRotate] = useState({ rotateX: 0, rotateY: 0 });
   const { theme, systemTheme } = useTheme();
+  const router = useRouter();
+  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -134,16 +152,21 @@ export default function Home() {
             <div className="md:w-1/2 mb-8 md:mb-0">
               <MotionWrapper>
                 <h2 className="text-4xl md:text-6xl font-bold mb-4">
-                  Landing page Tagline
+                  No bones. All flavor.
                 </h2>
               </MotionWrapper>
               <MotionWrapper delay={0.2}>
-                <p className="text-xl  mb-6">No bones. All flavor.</p>
+                <p className="text-xl  mb-6">
+                  Savor every bite with endless boneless goodness
+                </p>
               </MotionWrapper>
               <MotionWrapper delay={0.4}>
                 <Button
                   size="lg"
                   className="bg-[#C41B1B] hover:bg-[#c41b1bd7] text-white"
+                  onClick={() =>
+                    router.push(`https://cnm-order-form.vercel.app`)
+                  }
                 >
                   Order Now
                   <ChevronRight className="ml-2 h-4 w-4" />
@@ -181,9 +204,9 @@ export default function Home() {
 
         <section className="mb-24">
           <h3 className="text-3xl font-bold mb-8 text-center">
-            Unique/whats new/ etc. (sample from tech industries)
+            What Makes Our Chicken Clucking Amazing
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <MotionWrapper key={index} delay={index * 0.1}>
                 <Card className="w-full h-full">
@@ -203,55 +226,77 @@ export default function Home() {
         <section className="mb-24">
           <Card className="bg-[#C41B1B] text-white">
             <CardContent className="p-8">
-              <h3 className="text-3xl font-bold mb-4">What Our Users Say</h3>
+              <h3 className="text-3xl font-bold mb-4">
+                What Our Customers Say
+              </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {testimonials.map((testimonial, index) => (
-                  <MotionWrapper key={index} delay={index * 0.1}>
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center mb-4">
-                          <Image
-                            src={`https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXZhdGFyfGVufDB8fDB8fHww`}
-                            alt={testimonial.name}
-                            className="w-12 h-12 rounded-full mr-4 object-cover"
-                            width={48}
-                            height={48}
-                          />
-                          <div>
-                            <h4 className="font-semibold">
-                              {testimonial.name}
-                            </h4>
-                            <div className="flex text-[#f2ac07]">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className="h-4 w-4 fill-current"
+              <div className="p-10">
+                <Carousel
+                  className="w-full mx-auto"
+                  opts={{
+                    align: "start",
+                    loop: true,
+                  }}
+                  plugins={[autoplay.current]}
+                >
+                  <CarouselContent className="-ml-2 md:-ml-4">
+                    {testimonials.map((testimonial, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="w-full lg:basis-1/2 pl-2 md:pl-4"
+                      >
+                        <MotionWrapper key={index} delay={index * 0.1}>
+                          <Card>
+                            <CardContent className="p-6">
+                              <div className="flex items-center mb-4">
+                                <Image
+                                  src={`https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXZhdGFyfGVufDB8fDB8fHww`}
+                                  alt={testimonial.name}
+                                  className="w-12 h-12 rounded-full mr-4 object-cover"
+                                  width={48}
+                                  height={48}
                                 />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        <p className="italic">
-                          &quot; {testimonial.comment} &quot;
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </MotionWrapper>
-                ))}
+                                <div>
+                                  <h4 className="font-semibold">
+                                    {testimonial.name}
+                                  </h4>
+                                  <div className="flex text-[#f2ac07]">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        className="h-4 w-4 fill-current"
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                              <p className="italic">{testimonial.comment}</p>
+                            </CardContent>
+                          </Card>
+                        </MotionWrapper>{" "}
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious variant={"ghost"} />
+                  <CarouselNext variant={"ghost"} />
+                </Carousel>
               </div>
             </CardContent>
           </Card>
         </section>
 
         <section className="text-center">
-          <h3 className="text-3xl font-bold mb-4">Ready to (something)?</h3>
-          <p className="text-xl  mb-8">Order now and (promo?)!</p>
+          <h3 className="text-3xl font-bold mb-4">
+            Enjoyed your meal? We'd love your feedback!
+          </h3>
+          <p className="text-xl  mb-8">
+            Your thoughts help us make every meal even better
+          </p>
           <Button
             size="lg"
             className="bg-[#C41B1B] hover:bg-[#c41b1bd7] text-white"
           >
-            Order Now <ChevronRight className="ml-2 h-4 w-4" />
+            Give Feedback <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </section>
       </main>

@@ -81,3 +81,14 @@ export const getMonthlyOrders = async () => {
     orders: ordersByMonth[month],
   }));
 };
+
+export const getAllOrderItems = async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('order_item')
+    .select('*, product(*)')
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};

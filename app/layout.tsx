@@ -16,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Chicken Near Me | Admin",
-  description: "Order Management System",
+  title: "Chicken Near Me",
+  description: "Chicken Near Me",
 };
 
 export default function RootLayout({

@@ -7,7 +7,7 @@ export const Footer = () => (
       <div className="">
         <Link
           href="#"
-          className="flex items-center text-lg font-bold"
+          className="flex items-center text-lg font-bold whitespace-nowrap "
           prefetch={false}
         >
           <Image
@@ -21,7 +21,7 @@ export const Footer = () => (
         </Link>
       </div>
 
-      <nav className="flex items-center flex-wrap space-x-4 text-sm  justify-end">
+      <nav className="flex items-center flex-wrap space-x-4 text-sm whitespace-nowrap justify-end">
         <Link href="#" className="hover:underline" prefetch={false}>
           About
         </Link>

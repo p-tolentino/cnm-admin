@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User as UserIcon, Menu, Moon, Sun } from "lucide-react";
+import { User as UserIcon, Menu, Moon, Sun, PcCaseIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { PiSignOut as SignOut } from "react-icons/pi";
+import { Separator } from "./ui/separator";
 
 const NAV_LINKS = [
   { href: "/admin/dashboard", label: "Dashboard" },
@@ -142,46 +143,36 @@ export const Header = () => {
             />
           </div>
         </form> */}
+        <Button className="hover:bg-none rounded-xl" onClick={handleLogout}>
+          Logout
+          <SignOut className="w-4 h-4 " />
+        </Button>{" "}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
+              className="hover:bg-none rounded-xl"
               variant="outline"
               size="icon"
-              className="hover:bg-none rounded-xl "
             >
-              <UserIcon className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
+            <DropdownMenuLabel>Theme Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              Logout
-              <SignOut className="w-4 h-4 " />
+            <DropdownMenuItem onClick={() => setTheme("light")}>
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all " />
+              Light
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="w-full" variant="outline" size="icon">
-                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                    <span className="sr-only">Toggle theme</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setTheme("light")}>
-                    Light
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("dark")}>
-                    Dark
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("system")}>
-                    System
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all " />
+              Dark
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+              <PcCaseIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all " />
+              System
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
