@@ -4,7 +4,6 @@ import { ADMIN } from "../constants/constants";
 import { RenderMounted } from "@/components/render-mounted";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { toast } from "sonner";
 import UnauthorizedToast from "@/components/unauthorized-toast";
 
 export default async function AdminLayout({
@@ -29,6 +28,8 @@ export default async function AdminLayout({
         return redirect("/auth");
       }
     }
+
+    console.log(data.type);
 
     if (data.type === ADMIN) {
       return redirect("/");
