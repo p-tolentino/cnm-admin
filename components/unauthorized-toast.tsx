@@ -14,7 +14,7 @@ const UnauthorizedToast = () => {
       () => router.push(`https://cnm-order-form.vercel.app/user`),
       5000
     );
-  }, []);
+  }, [router]);
 
   return <div>{/* Rest of your user page content */}</div>;
 };

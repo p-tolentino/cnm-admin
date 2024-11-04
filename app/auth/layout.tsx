@@ -26,7 +26,7 @@ export default async function AuthLayout({
     if (data.type === ADMIN) {
       return redirect("/admin");
     } else {
-      return redirect(`cnm-order-form.vercel.app/user`);
+      return redirect(process.env.NEXT_PUBLIC_CLIENT_URL!);
     }
   }
 
