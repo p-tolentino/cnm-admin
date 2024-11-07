@@ -22,6 +22,9 @@ import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 import { PiSignOut as SignOut } from "react-icons/pi";
 import { Separator } from "./ui/separator";
+import { toast } from "sonner";
+
+import { useAuth } from "@/hooks/use-auth";
 
 const NAV_LINKS = [
   { href: "/admin/dashboard", label: "Dashboard" },
@@ -38,25 +41,19 @@ export const Header = () => {
 
   const supabase = createClient();
 
-  const [user, setUser] = useState<User | null>(null);
+  const user = useAuth();
 
   const logoSrc =
     theme === "dark" || (theme === "system" && systemTheme === "dark")
       ? "/cover-dark.png"
       : "/cover.png";
 
-  // Fetch user data once the component mounts
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data) setUser(data.user);
-    };
-    fetchUser();
-  }, [supabase]);
-
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    await supabase.auth.signOut().then(() => {
+      const loadingToast = toast.loading("Logging out...");
+      setTimeout(() => router.push("/"), 2000);
+      setTimeout(() => toast.dismiss(loadingToast), 2000);
+    });
   };
 
   return (

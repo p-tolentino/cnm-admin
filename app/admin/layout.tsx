@@ -29,11 +29,7 @@ export default async function AdminLayout({
       }
     }
 
-    console.log(data.type);
-
-    if (data.type === ADMIN) {
-      return redirect("/");
-    } else {
+    if (data.type !== ADMIN) {
       return <UnauthorizedToast />;
     }
   }

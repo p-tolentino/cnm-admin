@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronRight, Star } from "lucide-react";
 import { GiChickenLeg, GiChefToque, GiHotSpices } from "react-icons/gi";
+import { PiSignIn as SignIn } from "react-icons/pi";
 import {
   Carousel,
   CarouselContent,
@@ -27,6 +28,8 @@ import {
 } from "react-icons/ti";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/use-auth";
+import { ADMIN } from "./constants/constants";
 
 interface MotionWrapperProps {
   children: ReactNode;
@@ -96,6 +99,7 @@ export default function Home() {
   const { theme, systemTheme } = useTheme();
   const router = useRouter();
   const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const user = useAuth();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -135,15 +139,17 @@ export default function Home() {
             />
           )}
         </h1>
-        <Link href={`/admin/dashboard`}>
-          <Button
-            className="opacity-25 text-sm hover:opacity-70 hover:text-md transition-all "
-            variant={"ghost"}
-          >
-            Admin Dashboard
-            <RightArrow />
-          </Button>
-        </Link>
+        {(user === null || user.type === ADMIN) && (
+          <Link href={`/auth`}>
+            <Button
+              className="opacity-25 text-sm hover:opacity-70 hover:text-md transition-all "
+              variant={"ghost"}
+            >
+              {user && user.type === ADMIN ? `Admin Dashboard` : `Login`}
+              {user && user.type === ADMIN ? <RightArrow /> : <SignIn />}
+            </Button>
+          </Link>
+        )}
       </header>
 
       <main className="container mx-auto px-4 py-12 flex-grow">

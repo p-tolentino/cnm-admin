@@ -16,7 +16,7 @@ const UnauthorizedToast = () => {
     );
   }, [router]);
 
-  return <div>{/* Rest of your user page content */}</div>;
+  return <div>{/* page content */}</div>;
 };
 
 export default UnauthorizedToast;
